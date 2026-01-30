@@ -10,8 +10,38 @@ import re
 from pathlib import Path
 
 
+
+import zipfile
+from xml.etree import ElementTree as ET
+
+def extract_docx_text(docx_path):
+    """
+    专门处理docx文件，将其作为zip解压并提取xml中的文本
+    """
+    try:
+        with zipfile.ZipFile(docx_path, 'r') as zip_ref:
+            # 读取document.xml文件
+            xml_content = zip_ref.read('word/document.xml')
+            tree = ET.XML(xml_content)
+            
+            # 提取所有文本节点
+            namespace = {'w': 'http://schemas.openxmlformats.org/wordprocessingml/2006/main'}
+            paragraphs = []
+            for paragraph in tree.findall('.//w:p', namespace):
+                texts = []
+                for node in paragraph.findall('.//w:t', namespace):
+                    if node.text:
+                        texts.append(node.text)
+                if texts:
+                    paragraphs.append(''.join(texts))
+            
+            return '\n'.join(paragraphs)
+    except Exception:
+        # 如果解析失败，返回None，以便回退到暴力提取
+        return None
+
 def extract_chinese_text(file_path):
-    """从文件中提取中文文本"""
+    """从文件中提取中文文本（暴力提取模式，用于非标准文档）"""
     try:
         # 以二进制方式读取文件
         with open(file_path, 'rb') as f:
@@ -62,8 +92,16 @@ def convert_to_txt(source_file, output_file=None):
     if output_file is None:
         output_file = str(Path(source_file).with_suffix('.txt'))
     
-    # 提取文本
-    text = extract_chinese_text(source_file)
+    source_path = Path(source_file)
+    text = None
+    
+    # 如果是docx文件，优先尝试结构化解析
+    if source_path.suffix.lower() == '.docx':
+        text = extract_docx_text(source_file)
+    
+    # 如果不是docx或者解析失败，尝试暴力提取
+    if not text:
+        text = extract_chinese_text(source_file)
     
     if text and len(text) > 10:
         # 写入文件
