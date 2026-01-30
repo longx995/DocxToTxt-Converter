@@ -1,3 +1,7 @@
+```markdown
+![GitHub release](https://img.shields.io/github/v/release/longx995/DocxToTxt-Converter)
+![GitHub downloads](https://img.shields.io/github/downloads/longx995/DocxToTxt-Converter/total)
+```
 # DocxToTxt 批量转换工具
 
 一个简单易用的批量文档转换工具，可以将doc/docx格式的文档批量转换为纯文本txt格式。
@@ -137,6 +141,12 @@ A: 本工具不支持重命名，只进行格式转换。
 - ✅ 多种中文编码支持
 
 - **Python版本**: 3.13
+
+```markdown
+## 下载
+📥 **最新版本**: [v1.0](https://github.com/longx995/DocxToTxt-Converter/releases/tag/v1.0)
+直接下载exe文件：[DocxToTxt转换工具.exe](https://github.com/longx995/DocxToTxt-Converter/releases/download/v1.0/DocxToTxt转换工具.exe)
+```
 
 ## 开源许可
 
